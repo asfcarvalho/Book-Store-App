@@ -20,14 +20,26 @@ class ListBookPresenter: ListBookPresenterProtocol {
     private var nextMaxPage = 20
     private let maxPage = 20
     private var onlyFavorite = false
+    private var search: String = ""
     
-    func viewDidLoad() {
+    func bookSearch(_ search: String) {
+        if self.search != search {
+            self.search = search
+            cleamParamters()
+        }
+        
         viewController?.showLoading()
         fetchData()
     }
     
     private func fetchData() {
-        interactor?.bookFetch(onlyFavorite, page)
+        interactor?.bookFetch(search, onlyFavorite, page)
+    }
+    
+    private func cleamParamters() {
+        page = 0
+        totalPageCount = 0
+        nextMaxPage = 20
     }
     
     func callNextPage(_ indexPath: [IndexPath]) {
@@ -56,13 +68,14 @@ class ListBookPresenter: ListBookPresenterProtocol {
         wireFrame?.showDetail(from: viewController, item: myBook)
     }
     
-    func showOnlyFavorite(_ onlyFavorite: Bool) {
+    func showOnlyFavorite(_ search: String, _ onlyFavorite: Bool) {
+        
+        cleamParamters()
         
         viewController?.showLoading()
-        
         self.onlyFavorite = onlyFavorite
         
-        interactor?.bookFetch(onlyFavorite, page)
+        interactor?.bookFetch(search, onlyFavorite, page)
     }
     
     func showOnlyFavorite() -> Bool {

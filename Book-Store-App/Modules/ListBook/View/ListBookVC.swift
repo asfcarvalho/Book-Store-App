@@ -23,7 +23,7 @@ class ListBookVC: UIViewController {
         super.viewWillAppear(animated)
         
         title = "Books"
-        presenter?.viewDidLoad()
+        presenter?.bookSearch("ios")
     }
     
     private func setupUI() {
@@ -41,8 +41,12 @@ class ListBookVC: UIViewController {
         presenter?.showDetail(indexPath)
     }
     
-    func showOnlyFavorite(_ onlyFavorite: Bool) {
-        presenter?.showOnlyFavorite(onlyFavorite)
+    func showOnlyFavorite(_ search: String, _ onlyFavorite: Bool) {
+        presenter?.showOnlyFavorite(search, onlyFavorite)
+    }
+    
+    func bookSearch(_ search: String) {
+        presenter?.bookSearch(search)
     }
 }
 
@@ -70,5 +74,9 @@ extension ListBookVC: ListBookVCProtocol {
     
     func stopLoading() {
         Loading.shared.stopLoading()
+    }
+    
+    func showOnlyFavorite() -> Bool {
+        return presenter?.showOnlyFavorite() ?? false
     }
 }

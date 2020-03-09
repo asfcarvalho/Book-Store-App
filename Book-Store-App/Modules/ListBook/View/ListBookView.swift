@@ -17,6 +17,14 @@ class ListBookView: UIView {
     let favoriteView = UIView()
     let favoriteSwitch = UISwitch()
     
+    let searchBar: UISearchBar = {
+        let search = UISearchBar()
+        search.text = "ios"
+        search.showsCancelButton = true
+        search.enablesReturnKeyAutomatically = false
+        return search
+    }()
+    
     let favoriteLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .right
@@ -59,6 +67,8 @@ class ListBookView: UIView {
     
     private func setupView() {
         
+        searchBar.delegate = self
+        
         favoriteSwitch.addTarget(self, action: #selector(favoriteSwitchAction(_:)), for: UIControl.Event.touchUpInside)
         
         favoriteStackView.addArrangedSubview(favoriteLabel)
@@ -78,7 +88,8 @@ class ListBookView: UIView {
         collectionView.backgroundColor = .white
         lineView.backgroundColor = .lightGray
         
-        addSubviews([favoriteView,
+        addSubviews([searchBar,
+                     favoriteView,
                      collectionView])
         
         setupAnchors()
@@ -86,8 +97,13 @@ class ListBookView: UIView {
     
     private func setupAnchors() {
         
-        favoriteView
+        searchBar
             .topToSuperview(margin: 0, toSafeView: true)
+            .leadingToSuperview()
+            .trailingToSuperview()
+        
+        favoriteView
+            .topToBottom(of: searchBar)
             .leadingToSuperview()
             .trailingToSuperview()
         
@@ -114,7 +130,13 @@ class ListBookView: UIView {
     }
     
     @objc func favoriteSwitchAction(_ sender: UISwitch) {
-        viewController?.showOnlyFavorite(favoriteSwitch.isOn)
+        hideKeyboard()
+        let search = searchBar.text ?? ""
+        viewController?.showOnlyFavorite(search, favoriteSwitch.isOn)
+    }
+    
+    private func hideKeyboard() {
+        endEditing(true)
     }
 }
 
@@ -149,6 +171,7 @@ extension ListBookView: UICollectionViewDataSource, UICollectionViewDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        endEditing(true)
         viewController?.showDetail(indexPath)
     }
     
@@ -157,5 +180,25 @@ extension ListBookView: UICollectionViewDataSource, UICollectionViewDelegate {
 extension ListBookView: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         viewController?.callNextPage(indexPaths)
+    }
+}
+
+extension ListBookView: UISearchBarDelegate {
+    
+    private func searchAction(_ search: String) {
+        hideKeyboard()
+        viewController?.bookSearch(search)
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let search = searchBar.text ?? ""
+        searchAction(search)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        let search = searchBar.text ?? ""
+        if viewController?.showOnlyFavorite() == true && search.isEmpty {
+            searchAction(search)
+        }
     }
 }

@@ -15,19 +15,24 @@ class ListBookInteractor: ListBookInteractorInputProtocol {
     
     private var bookList: [MyBook]?
     private var favoriteBookList: [MyBook]?
+    private var lastSearch = ""
     
-    func bookFetch(_ onlyFavorite: Bool, _ page: Int) {
+    func bookFetch(_ search: String, _ onlyFavorite: Bool, _ page: Int) {
         if onlyFavorite {
-            LocalDataModule.share.fetchAllData { (bookList) in
+            LocalDataModule.share.fetchDataBy(search, callBack: { (bookList) in
                 if let bookList = bookList {
                     favoriteBookList = MyBook.getMyBookFavorite(bookList)
                     presenter?.onSuccess(favoriteBookList ?? [], nil)
                 } else {
                     presenter?.onError("Erron on list book")
                 }
-            }
+            })
         } else {
-            dataModule?.bookFetch(page)
+            if lastSearch != search {
+                lastSearch = search
+                bookList = nil
+            }
+            dataModule?.bookFetch(search, page)
         }
     }
 }

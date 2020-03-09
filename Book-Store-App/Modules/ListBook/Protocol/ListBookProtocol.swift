@@ -18,11 +18,13 @@ protocol ListBookVCProtocol {
     var listBookView: ListBookView? { get set }
     var presenter: ListBookPresenterProtocol? { get set }
     
-    func showOnlyFavorite(_ onlyFavorite: Bool)
+    func bookSearch(_ search: String)
+    func showOnlyFavorite(_ search: String, _ onlyFavorite: Bool)
     func showDetail(_ indexPath: IndexPath)
     func callNextPage(_ indexPath: [IndexPath])
     func getBookCount() -> Int
     func getBookItem(_ indexPath: IndexPath) -> MyBook?
+    func showOnlyFavorite() -> Bool
     func showBookList()
     func showLoading()
     func stopLoading()
@@ -34,9 +36,9 @@ protocol ListBookPresenterProtocol {
     var wireFrame: ListBookWireFrameProtocol? { get set }
     var interactor: ListBookInteractorInputProtocol? { get set }
     
-    func viewDidLoad()
+    func bookSearch(_ search: String)
     
-    func showOnlyFavorite(_ onlyFavorite: Bool)
+    func showOnlyFavorite(_ search: String, _ onlyFavorite: Bool)
     func showDetail(_ indexPath: IndexPath)
     func getNextMaxPage() -> Int
     func callNextPage(_ indexPath: [IndexPath])
@@ -49,7 +51,7 @@ protocol ListBookInteractorInputProtocol {
     var dataModule: ListBookDataModuleInputProtocol? { get set }
     var presenter: ListBookInteractorOutputProtocol? { get set }
     
-    func bookFetch(_ onlyFavorite: Bool, _ page: Int)
+    func bookFetch(_ search: String, _ onlyFavorite: Bool, _ page: Int)
 }
 
 protocol ListBookInteractorOutputProtocol {
@@ -66,7 +68,7 @@ protocol ListBookWireFrameProtocol {
 
 protocol ListBookDataModuleInputProtocol {
     var interactor: ListBookDataModuleOutputProtocol? { get set }
-    func bookFetch(_ page: Int)
+    func bookFetch(_ search: String, _ page: Int)
 }
 
 protocol ListBookDataModuleOutputProtocol: class {

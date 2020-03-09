@@ -13,9 +13,10 @@ class ListBookDataModule: ListBookDataModuleInputProtocol {
     
     let pageSize = 20
     
-    func bookFetch(_ page: Int) {
+    func bookFetch(_ search: String, _ page: Int) {
         let apiRequest = APIRequest()
-        let stringURL = String(format: "\(URLDdefault)volumes?q=ios&maxResults=%i&startIndex=%i", pageSize, page)
+        let searchString = search.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? ""
+        let stringURL = String(format: "\(URLDdefault)volumes?q=%@&maxResults=%i&startIndex=%i", searchString, pageSize, page)
         apiRequest.baseURL = URL(string: stringURL)
         
         APICalling().fetch(apiRequest: apiRequest) { [weak self] (result: Book?, error) in

@@ -14,7 +14,6 @@ class APICalling {
         
         let request = apiRequest.request(with: apiRequest.baseURL)
         
-        
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             
             guard let data = data, error == nil else {

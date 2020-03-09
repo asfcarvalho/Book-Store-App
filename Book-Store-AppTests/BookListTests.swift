@@ -57,11 +57,12 @@ class BookListTests: XCTestCase {
     }
     
     class MockDataModuleInput: ListBookDataModuleInputProtocol {
+        
         var interactor: ListBookDataModuleOutputProtocol?
         
-        let bookMock = Book(kind: nil, totalItems: nil, items: [Item(id: "123", etag: nil, selfLink: nil, volumeInfo: VolumeInfo(title: nil, subtitle: nil, authors: ["Author 1", "Author 2"], description: nil, imageLinks: nil), saleInfo: nil)])
+        let bookMock = Book(kind: nil, totalItems: nil, items: [Item(id: "123", etag: nil, selfLink: nil, volumeInfo: VolumeInfo(title: "ios", subtitle: nil, authors: ["Author 1", "Author 2"], description: nil, imageLinks: nil), saleInfo: nil)])
         
-        func bookFetch(_ page: Int) {
+        func bookFetch(_ search: String, _ page: Int) {
             interactor?.onSuccess(bookMock)
         }
     }
@@ -74,14 +75,14 @@ class BookListTests: XCTestCase {
     func testOnlyFavorite() {
         bookPresenter?.favoriteAction()
         
-        presenter?.showOnlyFavorite(true)
+        presenter?.showOnlyFavorite("ios", true)
         
         XCTAssertTrue(mockInteractorOutput?.myBook?.count ?? 0 > 0)
         removeAllData()
     }
 
     func testAuthorIsCorrect() {
-        presenter?.viewDidLoad()
+        presenter?.bookSearch("ios")
         
         let modelAuthor = "Author 1;\nAuthor 2"
         
@@ -89,13 +90,13 @@ class BookListTests: XCTestCase {
     }
     
     func testShowList() {
-        presenter?.viewDidLoad()
+        presenter?.bookSearch("ios")
         
         XCTAssertTrue(mockInteractorOutput?.myBook?.count ?? 0 > 0)
     }
     
     func testCallNextPage() {
-        presenter?.viewDidLoad()
+        presenter?.bookSearch("ios")
         presenter?.callNextPage([IndexPath(item: 19, section: 0)])
         
         XCTAssertTrue(mockInteractorOutput?.myBook?.count ?? 0 > 1)

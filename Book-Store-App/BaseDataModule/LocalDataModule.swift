@@ -64,6 +64,29 @@ class LocalDataModule {
         }
     }
     
+    func fetchDataBy(_ title: String, callBack: ([MyFavoriteBook]?) -> Void) {
+        
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            callBack(nil)
+            return
+        }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MyFavoriteBook")
+        if !title.isEmpty {
+            fetchRequest.predicate = NSPredicate(format: "title CONTAINS[c] %@", title)
+        }
+        
+        do {
+            let result = try managedContext.fetch(fetchRequest)
+            callBack(result as? [MyFavoriteBook])
+        } catch {
+            print("Failed")
+            callBack(nil)
+        }
+    }
+    
     func fetchAllData(callBack: ([MyFavoriteBook]?) -> Void) {
         
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
