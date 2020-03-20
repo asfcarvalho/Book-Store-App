@@ -19,11 +19,14 @@ class ListBookDataModule: ListBookDataModuleInputProtocol {
         let stringURL = String(format: "\(URLDdefault)volumes?q=%@&maxResults=%i&startIndex=%i", searchString, pageSize, page)
         apiRequest.baseURL = URL(string: stringURL)
         
-        APICalling().fetch(apiRequest: apiRequest) { [weak self] (result: Book?, error) in
-            if let result = result, error == nil {
-                self?.interactor?.onSuccess(result)
-            }else {
-                self?.interactor?.onError(error ?? "Error")
+        APICalling<Book>().fetch(apiRequest: apiRequest) { [weak self] result in
+            switch result {
+            case .failure(let error):
+                self?.interactor?.onError(error.localizedDescription)
+                break
+            case .success(let book):
+                self?.interactor?.onSuccess(book)
+                break
             }
         }
     }

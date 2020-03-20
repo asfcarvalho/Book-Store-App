@@ -19,8 +19,6 @@ class ListBookWireFrame: ListBookWireFrameProtocol {
         let viewController = ListBookVC()
         viewController.presenter = presenter
         presenter.viewController = viewController
-//        presenter.dataModule = dataModule
-//        dataModule.presenter = presenter
         presenter.wireFrame = wireFrame
         presenter.interactor = interactor
         interactor.presenter = presenter
